@@ -17,6 +17,7 @@ public class IpInterceptor extends HandlerInterceptorAdapter{
 		blackList = new ArrayList<String>();
 		blackList.add(ipNum);
 	}
+	//
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
