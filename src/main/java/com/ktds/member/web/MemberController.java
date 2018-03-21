@@ -1,5 +1,7 @@
 package com.ktds.member.web;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ktds.community1.service.CommunityService;
@@ -146,5 +149,30 @@ public class MemberController {
 			session.invalidate();
 		}
 		return "member/delete/delete";
+	}
+	
+	//ResponseBody는 넘기려는 데이터를 JSON형태로 넘긴다. (라이브러리 추가할 것(pom.xml))
+	  //JSON의 특징. 모든 언어에서 읽을 수 있다.
+	@RequestMapping("/api/exists/email")
+	@ResponseBody
+	public Map<String, Boolean> apiIsExistsEmail(@RequestParam String email){
+		boolean isExists= memberService.readCountMemberEmail(email);
+		
+		Map<String, Boolean> response= new HashMap<String, Boolean>();
+		response.put("response", isExists);
+		
+		return response;
+	}
+	
+	@RequestMapping("/api/exists/nickname")
+	@ResponseBody
+	public Map<String, Boolean> apiIsExistsNickname(@RequestParam String nickname){
+		boolean isExists= memberService.readIsMemberNickname(nickname);
+		System.out.println(isExists);
+		Map<String, Boolean> response= new HashMap<String, Boolean>();
+		System.out.println(response);
+		response.put("data", isExists);
+		
+		return response;
 	}
 }

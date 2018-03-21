@@ -14,6 +14,7 @@
 			<mvc:exclude-mapping path="/login" />
 			<mvc:exclude-mapping path="/regist" />
 			<mvc:exclude-mapping path="/static/**" />
+			<mvc:exclude-mapping path="/api/exists/**"/>
 			<bean id="sessionInterceptor" class="com.ktds.interceptors.SessionInterceptor" />
 		</mvc:interceptor>
 		<mvc:interceptor>

@@ -7,5 +7,7 @@ public interface MemberService {
 	public MemberVO readMember(MemberVO member);
 	public boolean removeMember(int id);
 	public boolean deleteMember(int id, String deleteFlag);
+	public boolean readCountMemberEmail(String email);
+	public boolean readIsMemberNickname(String nickname);
 	
 }

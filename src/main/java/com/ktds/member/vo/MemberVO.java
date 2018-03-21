@@ -11,6 +11,16 @@ public class MemberVO {
 	@NotEmpty(message="Email 빼먹었다.")
 	private String email;
 	private String registDate;
+	private String salt;
+	
+	public String getSalt() {
+		return salt;
+	}
+
+	public void setSalt(String salt) {
+		this.salt = salt;
+	}
+
 	public String getRegistDate() {
 		return registDate;
 	}

@@ -10,6 +10,7 @@
 			, NICKNAME
 			, PASSWORD
 			, REGIST_DATE
+			, SALT
 		)
 		VALUES (
 			MEMBER_ID_SEQ.NEXTVAL
@@ -17,13 +18,29 @@
 			, #{nickname}
 			, #{password}
 			, SYSDATE
+			, #{salt}
 		)
 	</insert>
+	
+	<select id="selectCountMemberEmail" parameterType="string" resultType="_int">
+		SELECT	COUNT(ID)
+		FROM	MEMBER
+		WHERE EMAIL= #{email}
+	
+	</select>
+	
+	<select id="selectIsMemberNickname" parameterType="string" resultType="_int">
+		SELECT	COUNT(ID)
+		FROM	MEMBER
+		WHERE	NICKNAME= #{nickname}
+	</select>
+	
 	<select id="selectMember" parameterType="MemberVO" resultType="MemberVO"> 
 		SELECT 	ID
 				,EMAIL
 				,NICKNAME
 				,REGIST_DATE registDate
+				,SALT
 		FROM	MEMBER
 		WHERE	EMAIL = #{email}
 		AND		PASSWORD = #{password}
@@ -34,5 +51,12 @@
 		WHERE MEMBER.ID = #{id}
 	
 	</delete>
+	
+		<!-- SALT값이 널이라면 널값을 줘라 xml에서의 널은 ''로 표현 -->
+	<select id="selectSalt" parameterType="string" resultType="string">
+		SELECT NVL(SALT, '')
+		FROM MEMBER
+		WHERE EMAIL= #{email}
+	</select>
 	
 </mapper>

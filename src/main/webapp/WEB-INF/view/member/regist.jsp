@@ -13,25 +13,51 @@
 	src="<c:url value="/static/js/jquery-3.3.1.min.js"/>"></script>
 <script type="text/javascript">
 	$().ready(function() {
+		//email을 눌렀다 땟을때(keyup)
 		$("#email").keyup(function() {
 			var value = $(this).val();
 			if (value != "") {
-				$(this).removeClass("invalid");
-				$(this).addClass("valid");
+				//AJax Call(http://localhost.:8080/api/exists/email?email=ㅁㄴㅇ)
+				//Ajax Call은 GET과 POST 두 가지 방식이 있다.
+				
+				//AJax Call 실행 $.post()  비동기방식
+				//("URL",{파라미터})
+				$.post("<c:url value="/api/exists/email"/>",{
+					email: value
+				},function(response){
+					if( response.response) {
+						$("#email").removeClass("valid");
+						$("#email").addClass("invalid");
+					}else{
+						$("#email").removeClass("invalid");
+						$("#email").addClass("valid");
+					}
+				});				
 			} else {
-				$(this).removeClass("valid");
-				$(this).addClass("invalid");
+				$("#email").removeClass("valid");
+				$("#email").addClass("invalid");
 			}
 		});
 
 		$("#nickname").keyup(function() {
 			var value = $(this).val();
+			
 			if (value != "") {
-				$(this).removeClass("invalid");
-				$(this).addClass("valid");
+				$.post("<c:url value="/api/exists/nickname"/>",{
+					nickname: value
+				},function(response){
+					console.log(response.data)
+					if(response.data){
+						$("#nickname").removeClass("valid");
+						$("#nickname").addClass("invalid");
+					}else{
+						$("#nickname").removeClass("invalid");
+						$("#nickname").addClass("valid");
+					}
+				});
 			} else {
-				$(this).removeClass("valid");
-				$(this).addClass("invalid");
+				$("#nickname").removeClass("valid");
+				$("#nickname").addClass("invalid");
 			}
 		});
 
@@ -60,7 +86,6 @@
 		});
 
 		$("#password-confirm").keyup(function() {
-
 			var value = $(this).val();
 			var password = $("#password").val();
 
@@ -75,37 +100,50 @@
 				$("#password").removeClass("invalid");
 				$("#password").addClass("valid");
 			}
-
 		});
 
 		$("#registBtn").click(function() {
-
 			if ($("#email").val() == "") {
 				alert("이메일을 입력하세요.");
 				$("#email").focus();
 				$("#email").addClass("invalid");
 				return false;
 			}
+			if ($("#email").hasClass("invalid")){
+				alert("작성한 이메일은 사용할 수 없습니다.");
+				$("#email").focus();
+				return false;				
+			}else{
+				
+				$.post("<c:url value="/api/exists/email"/>",{
+					email: $("#email").val()
+				},function(response){
+					if(response.response){
+						alert("작성한 이메일은 사용할 수 없습니다.");
+						$("#email").addClass("invalid");
+						$("#email").focus();
+						return false;
+					}
+					if ($("#nickname").val() == "") {
+						alert("닉네임을 입력하세요.");
+						$("#nickname").focus();
+						$("#nickname").addClass("invalid");
+						return false;
+					}
 
-			if ($("#nickname").val() == "") {
-				alert("닉네임을 입력하세요.");
-				$("#nickname").focus();
-				$("#nickname").addClass("invalid");
-				return false;
+					if ($("#password").val() == "") {
+						alert("비밀번호를 입력하세요.");
+						$("#password").focus();
+						$("#password").addClass("invalid");
+						return false;
+					}
+
+					$("#registForm").attr({
+						"method" : "post",
+						"action" : "<c:url value="/regist"/>"
+					}).submit();
+				});			
 			}
-
-			if ($("#password").val() == "") {
-				alert("비밀번호를 입력하세요.");
-				$("#password").focus();
-				$("#password").addClass("invalid");
-				return false;
-			}
-
-			$("#registForm").attr({
-				"method" : "post",
-				"action" : "<c:url value="/regist"/>"
-			}).submit();
-
 		});
 	});
 </script>
@@ -115,7 +153,7 @@
 		<jsp:include page="/WEB-INF/view/template/menu.jsp" />
 		<form:form modelAttribute="registForm">
 			<div>
-				<!-- TODO Email 중복검사 하기(ajax) -->
+				
 				<input type="email" id="email" class="invalid" name="email"
 					placeholder="E-mail" value="${registForm.email }" />
 				<div>
@@ -124,7 +162,7 @@
 			</div>
 			<!-- TODO nickname 중복검사 하기(ajax) -->
 			<div>
-				<input type="text" id="nickname" class="valid" name="nickname"
+				<input type="text" id="nickname" class="invalid" name="nickname"
 					placeholder="Nickname" value="${registForm.nickname }" />
 				<div>
 					<form:errors path="nickname" />

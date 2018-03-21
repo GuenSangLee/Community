@@ -1,4 +1,4 @@
-package com.ktds.community1.util;
+package com.ktds.member.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
