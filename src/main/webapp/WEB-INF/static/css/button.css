@@ -1,0 +1,16 @@
+.button {
+	display:inline-block;
+	border-radius:15px;
+	background-color:#8282fd;
+	color:#400040;
+	padding:15px 25px 15px 25px;
+	font-size:14pt;
+	cursor: pointer;
+}
+
+.botton:HOVER {
+	
+	background-color:#FFF;
+	color:#ecb9d1;
+	
+}

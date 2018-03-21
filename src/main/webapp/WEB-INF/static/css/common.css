@@ -1,0 +1,53 @@
+@charset "UTF-8";
+p. div, a, li, span, td, i, u, input, textarea, b, body{
+	font-size: 12pt;
+	color: #333;
+	font-family:"맑은 고딕", "맑은고딕";
+}
+
+body{
+	margin: 0px;
+	padding: 0px;
+	
+}
+#wrapper{
+	margin:0 auto;
+	width: 1000px;
+}
+
+h1.title{
+	background-color: #e3e3e3;
+	margin: 0px;
+	padding: 15px;
+	color: #333;	
+}
+
+table.grid{
+	/* 경계선 여백 제거*/
+	border-collapse: collapse;
+}
+/*grid라는 속성을 갖는 테이블의 <thead>의 th 수정*/
+table.grid > thead th {
+	background-color:#b3b3b3;
+	padding: 10px;
+	font-size:14pt;
+}
+
+table.grid > tbody td{
+	padding: 10px;
+}
+
+table.grid > tbody tr:nth-child(odd){
+	background-color: #FFe5a8;
+}
+
+table.grid > tbody tr > td:nth-child(1){
+	text-align: center;
+}
+table.grid > tbody tr > td:nth-child(3){
+	text-align: center;
+}
+
+table.grid > tfoot{
+	padding-top: 10px;
+}

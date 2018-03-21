@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd">
+	<mvc:annotation-driven />
+	<!-- 정적자원 설정 mapping : 정적자원을 가져올 고유 URL location : 정적자원이 있는 Base home /WEB-INF/static/js/jquery-3.3.1.min.js 
+		-> https://localhost:8080/contextPath/static/js/jquery-3.3.1.min.js로 가져온다 -->
+	<mvc:resources mapping="/static/**" location="/WEB-INF/static/" />
+	<!-- 모든 url 에서 interceptor가 동작되지만 로그인 페이지에서는 작동하지 않는다. -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<mvc:exclude-mapping path="/login" />
+			<mvc:exclude-mapping path="/regist" />
+			<mvc:exclude-mapping path="/static/**" />
+			<bean id="sessionInterceptor" class="com.ktds.interceptors.SessionInterceptor" />
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<bean id="IpInterceptor" class="com.ktds.interceptors.IpInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+	<bean id="validator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+	</bean>
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/view/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+	
+	<bean id = "multipartResolver" 
+	class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="UTF-8"/>
+		<property name="maxUploadSize" value="104857600"/>
+	</bean>
+	
+	<import resource="controllerContext.xml"/>
+	<import resource="communityContext.xml"/>
+	
+</beans>

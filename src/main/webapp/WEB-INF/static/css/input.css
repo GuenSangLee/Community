@@ -1,0 +1,20 @@
+input {
+	
+	padding:10px;
+	font-size:13pt;
+	width:400px;
+	margin:7px;
+	margin-left:0px;
+	border-radius:5px;
+	border: 1px solid #eeeeee;
+	
+}
+
+input.invalid {
+	background-color:#ecb9d1;
+	color:#ec869e;
+}
+
+input.valid{
+	background-color: #a2eca7;	
+}
