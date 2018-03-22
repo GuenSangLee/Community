@@ -139,9 +139,7 @@ public class CommunityController {
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
-	}
-
-	
+	}	
 	
 //	게시글id로 게시글 삭제.
 	@RequestMapping("/delete/{id}")

@@ -18,11 +18,16 @@
 				var url="<c:url value="/write/${communityVO.id}"/>";
 			}
 		});
-	
+		
+		$("#writeReplyBtn").click(function(){
+			$.post("<c:url value="/api/reply/${community.id}"/>",
+				$("#writeReplyForm").serialize(),
+				function(response) {
+					alert("등록됨!");
+					console.log(response);
+			});
+		});
 	});
-
-
-
 </script>
 </head>
 <body>
@@ -51,7 +56,20 @@
 		</c:if>
 		<p>
 		${community.body}
-	</p>
+		</p>
+		<hr />
+		<div id="replies"></div>
+		<div id="createReply">
+			<form id="writeReplyForm">
+				<input type="hidden" id="parentReplyId" name="parentReplyId" value="0"/>
+				<div>
+					<textarea id="body" name="body"></textarea>
+				</div>
+				<div>
+					<input type="button" id="writeReplyBtn" value="등록"/>
+				</div>
+			</form>
+		</div>
 	<p>
 		<c:if test="${sessionScope.__USER__.id == community.memberVO.id}">
 		<a href="<c:url value="/modify/${community.id}"/>">수정하기</a>

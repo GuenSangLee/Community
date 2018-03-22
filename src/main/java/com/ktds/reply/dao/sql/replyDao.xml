@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="ReplyDao">
+ 	<resultMap type="ReplyVO" id="replyVOMAP">
+ 		<id column="R_ID" property="id"/>
+ 		<result column="R_USER_ID" property="userId"/>
+ 		<result column="R_COMMUNITY_ID" property="communityId"/>
+ 		<result column="R_BODY" property="body"/>
+ 		<result column="R_REGIST_DATE" property="registDate"/>
+ 		<result column="PARENT_REPLY_ID" property="parentReplyId"/>
+ 		<association property="communityVO" javaType="CommunityVO">
+ 			<id column="C_ID" property="id"/>
+ 			<result column="TITLE" property="title"/>
+ 			<result column="C_BODY" property="body"/>
+ 			<result column="VIEW_COUNT" property="viewCount"/>
+ 			<result column="RECOMMENT_COUNT" property="recommnedCount"/>
+ 			<result column="REQUEST_IP" property="requestIp"/>
+ 			<result column="DISPLAY_FILE_NAME" property="displayFilename"/>
+ 			<result column="C_USER_ID" property="userId"/>
+ 		</association>
+ 		<association property="memberVO" javaType="MemberVO">
+ 			<id column="M_ID" property="id"/>
+ 			<result column="NICKNAME" property="nickname"/>
+ 			<result column="EMAIL" property="email"/>
+ 			<result column="M_REGIST_DATE" property="registDate"/>
+ 		</association> 	
+ 	</resultMap>
+ 	
+ 	
+ 	<select id="selectAllReplies" parameterType="_int" resultMap="replyVOMAP">
+ 		SELECT	R.ID R_ID
+ 				,R.User_Id R_USER_ID
+ 				,R.COMMUNITY_ID
+ 				,R.BODY R_BODY
+ 				,R.REGIST_DATE R_REGIST_DATE
+ 				,R.PARENT_REPLY_ID
+ 				,C.ID C_ID
+ 				,C.TITLE
+ 				,C.BODY
+ 				,C.VIEW_COUNT
+ 				,C.RECOMMEND_COUNT
+ 				,C.REQUEST_IP
+ 				,C.DISPLY_FILE_NAME
+ 				,C.USER_ID C_USER_ID
+ 				,M.ID M_ID
+ 			 /* ,M.NICKNAME */
+ 				,M.REGIST_DATE M_REGIST_DATE
+ 		FROM	REPLY R
+ 				,COMMUNITY C
+ 				,MEMBER M
+ 				,REPLY PR
+		WHERE	R.USER_ID = M.ID
+		AND		R.COMMUNITY_ID= C.ID
+		AND		M.ID= C.USER_ID
+ 	
+ 	</select>
+ 	
+ 	<select id="nextValue" resultType="_int">
+ 		SELECT	REPLY_ID_SEQ.NEXTVAL
+ 		FROM	DUAL
+ 	</select>
+ 	<insert id="insertReply" parameterType="ReplyVO">
+ 		INSERT	INTO REPLY (
+			ID
+			, USER_ID
+			, COMMUNITY_ID
+			, BODY
+			, REGIST_DATE
+			, PARENT_REPLY_ID
+		)
+		VALUES (
+			#{id}
+			, #{userId}
+			, #{communityId}
+			, #{body}
+			, SYSDATE
+			, #{parentReplyId}
+		)
+ 	
+ 	</insert>
+ 	
+ </mapper> 
+  

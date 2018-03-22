@@ -15,4 +15,10 @@
 		<property name="memberService" ref="memberService"/>
 		<property name="communityService" ref="communityService" />
 	</bean>
+	<bean id="replyController" class="com.ktds.reply.web.ReplyController">
+		<property name="replyService" ref="replyService"/>
+		<property name="memberService" ref="memberService" />
+		<property name="communityService" ref="communityService" />
+	</bean>
+	
 </beans>

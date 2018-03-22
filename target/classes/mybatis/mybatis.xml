@@ -7,10 +7,12 @@
 	<typeAliases>
 		<typeAlias type="com.ktds.community1.vo.CommunityVO" alias="CommunityVO" />
 		<typeAlias type="com.ktds.member.vo.MemberVO" alias="MemberVO" />
+		<typeAlias type="com.ktds.reply.vo.ReplyVO" alias="ReplyVO" />
 	</typeAliases>
 	
 	<mappers>
 		<mapper resource="/com/ktds/community1/dao/sql/communityDao.xml" />
 		<mapper resource="/com/ktds/member/dao/sql/memberDao.xml" />
+		<mapper resource="/com/ktds/reply/dao/sql/replyDao.xml"/>
 	</mappers>
 </configuration>  

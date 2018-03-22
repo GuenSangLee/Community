@@ -50,6 +50,7 @@ public class MemberController {
 	public String viewRegistPage() {
 		return "member/regist";
 	}
+	
 	@RequestMapping("/remove/{id}")
 	public String removeMemeber(@PathVariable int id, HttpSession session) {
 		if (memberService.removeMember(id))
