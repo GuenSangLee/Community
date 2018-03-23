@@ -4,7 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ktds.community1.dao.CommunityDao;
+import com.ktds.community1.vo.CommunitySearchVO;
 import com.ktds.community1.vo.CommunityVO;
+
+import io.github.seccoding.web.pager.Pager;
+import io.github.seccoding.web.pager.PagerFactory;
+import io.github.seccoding.web.pager.explorer.ClassicPageExplorer;
+import io.github.seccoding.web.pager.explorer.PageExplorer;
 
 public class CommunityServiceImpl implements CommunityService{
 	// 멤버변수 추가
@@ -15,8 +21,18 @@ public class CommunityServiceImpl implements CommunityService{
 	}
 	
 	@Override
-	public List<CommunityVO> getall() {
-		return communityDao.selectAll();
+	public PageExplorer getall(CommunitySearchVO communitySearchVO) {
+		//사용DB,페이지 수, 보여질 전체 개시글 수.
+		Pager pager= PagerFactory.getPager(Pager.ORACLE,
+											communitySearchVO.getPageNo()+"",
+											communityDao.selectCountAll(communitySearchVO));
+		
+		PageExplorer pageExplorer= pager.makePageExplorer(ClassicPageExplorer.class, communitySearchVO);
+		
+		pageExplorer.setList(communityDao.selectAll(communitySearchVO));
+		
+		
+		return pageExplorer;
 	}
 
 	@Override

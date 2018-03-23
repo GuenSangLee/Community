@@ -42,7 +42,6 @@
 			}
 
 			var writeForm = $("#writeForm");
-			
 			writeForm.attr({
 				"method" : "post",
 				"action" : url

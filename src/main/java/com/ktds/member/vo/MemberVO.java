@@ -3,6 +3,8 @@ package com.ktds.member.vo;
 import javax.validation.constraints.NotEmpty;
 
 public class MemberVO {
+	
+	
 	private int id;
 	@NotEmpty(message="Nickname 빼먹었다.")
 	private String nickname;

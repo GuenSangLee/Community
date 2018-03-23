@@ -8,6 +8,8 @@
 		<typeAlias type="com.ktds.community1.vo.CommunityVO" alias="CommunityVO" />
 		<typeAlias type="com.ktds.member.vo.MemberVO" alias="MemberVO" />
 		<typeAlias type="com.ktds.reply.vo.ReplyVO" alias="ReplyVO" />
+		<typeAlias type="com.ktds.community1.vo.CommunitySearchVO" alias="CommunitySearchVO"/>
+		
 	</typeAliases>
 	
 	<mappers>

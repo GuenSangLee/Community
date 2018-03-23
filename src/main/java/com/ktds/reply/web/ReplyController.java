@@ -52,11 +52,17 @@ public class ReplyController {
 		replyVO.setUserId(member.getId());
 		replyVO.setCommunityId(communityId);
 		
+		
 		boolean isSuccess= replyService.createReply(replyVO);
 		
+		ReplyVO newReply = null;
+		
+		if(isSuccess) {
+			newReply= replyService.readReply(replyVO.getId());
+		}
 		Map<String, Object> result= new HashMap<String, Object>();
 		result.put("status", isSuccess);
-		result.put("reply",replyVO);
+		result.put("reply", newReply);
 		
 		return result;
 	}

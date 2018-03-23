@@ -5,6 +5,7 @@
  <mapper namespace="ReplyDao">
  	<resultMap type="ReplyVO" id="replyVOMAP">
  		<id column="R_ID" property="id"/>
+ 		<result column="LEVEl" property="level"/>
  		<result column="R_USER_ID" property="userId"/>
  		<result column="R_COMMUNITY_ID" property="communityId"/>
  		<result column="R_BODY" property="body"/>
@@ -28,8 +29,50 @@
  		</association> 	
  	</resultMap>
  	
+ 	<!-- 댓글table에 Level을 추가해 대댓여부를 표현한다.
+ 			START WITH 루트를 지정.
+ 			CONNECT BY PRIOR  계층기준.
+ 			ORDER SIBLINGS 계층구조를 정렬.
+
+
+ 			*표준 쿼리가 아니다(oracle만 가능)
  	
+ 	 -->
  	<select id="selectAllReplies" parameterType="_int" resultMap="replyVOMAP">
+ 		SELECT	LEVEL
+ 				,R.ID R_ID
+ 				,R.User_Id R_USER_ID
+ 				,R.COMMUNITY_ID
+ 				,R.BODY R_BODY
+ 				,R.REGIST_DATE R_REGIST_DATE
+ 				,R.PARENT_REPLY_ID
+ 				,C.ID C_ID
+ 				,C.TITLE
+ 				,C.BODY
+ 				,C.VIEW_COUNT
+ 				,C.RECOMMEND_COUNT
+ 				,C.REQUEST_IP
+ 				,C.DISPLAY_FILE_NAME
+ 				,C.USER_ID C_USER_ID
+ 				,R_M.ID M_ID
+ 				,R_M.NICKNAME NICKNAME
+ 				,R_M.EMAIL EMAIL
+ 				,R_M.REGIST_DATE M_REGIST_DATE
+ 		FROM	REPLY R
+ 				,COMMUNITY C
+ 				,MEMBER C_M
+ 				,MEMBER R_M
+ 				,REPLY PR
+		WHERE	R.USER_ID = R_M.ID
+		AND		R.COMMUNITY_ID= C.ID
+		AND		C_M.ID= C.USER_ID
+		AND		R.COMMUNITY_ID= #{communityId}
+		START	WITH R.PARENT_REPLY_ID = 0
+		CONNECT BY PRIOR R.ID = R.PARENT_REPLY_ID
+		ORDER	SIBLINGS BY R.ID ASC
+ 	</select>
+ 	
+ 	<select id="selectOne" parameterType="_int" resultMap="replyVOMAP">
  		SELECT	R.ID R_ID
  				,R.User_Id R_USER_ID
  				,R.COMMUNITY_ID
@@ -42,19 +85,21 @@
  				,C.VIEW_COUNT
  				,C.RECOMMEND_COUNT
  				,C.REQUEST_IP
- 				,C.DISPLY_FILE_NAME
+ 				,C.DISPLAY_FILE_NAME
  				,C.USER_ID C_USER_ID
- 				,M.ID M_ID
- 			 /* ,M.NICKNAME */
- 				,M.REGIST_DATE M_REGIST_DATE
+ 				,R_M.ID M_ID
+ 				,R_M.NICKNAME NICKNAME
+ 				,R_M.EMAIL EMAIL
+ 				,R_M.REGIST_DATE M_REGIST_DATE
  		FROM	REPLY R
  				,COMMUNITY C
- 				,MEMBER M
+ 				,MEMBER C_M
+ 				,MEMBER R_M
  				,REPLY PR
-		WHERE	R.USER_ID = M.ID
+		WHERE	R.USER_ID = R_M.ID
 		AND		R.COMMUNITY_ID= C.ID
-		AND		M.ID= C.USER_ID
- 	
+		AND		C_M.ID= C.USER_ID
+		AND		R.ID= #{replyId}
  	</select>
  	
  	<select id="nextValue" resultType="_int">

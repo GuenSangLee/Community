@@ -10,6 +10,9 @@
 <body>
 	<div id="wrapper">
 		<jsp:include page="/WEB-INF/view/template/menu.jsp"/>
+		<div>
+			${pageExplorer.totalCount}
+		</div>
 		<table>
 			<tr>
 				<th>ID</th>
@@ -19,7 +22,7 @@
 				<th>조회수</th>
 			</tr>
 
-			<c:forEach items="${communityList}" var="community">
+				<c:forEach items="${pageExplorer.list}" var="community">
 				<tr>
 					<td>${community.id}</td>
 					<td><a href="<c:url value="/read/${community.id}"/>">${community.title}
@@ -44,12 +47,16 @@
 				</tr>
 				
 			</c:forEach>
-			<c:if test="${empty communityList}">
+			<c:if test="${empty pageExplorer.list}">
 				<tr>
 					<td colspan="5">등록된 게시글이 없습니다.</td>
 				</tr>
 			</c:if>
 		</table>
+		<form id="searchForm">
+			${pageExplorer.make()}
+		
+		</form>
 		<div>
 			<div style = "display:inline-block">
 				<a href="/write">[글쓰기]</a>

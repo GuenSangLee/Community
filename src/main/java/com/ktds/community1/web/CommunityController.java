@@ -17,14 +17,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ktds.community1.service.CommunityService;
+import com.ktds.community1.vo.CommunitySearchVO;
 import com.ktds.community1.vo.CommunityVO;
 import com.ktds.member.constants.Member;
 import com.ktds.member.vo.MemberVO;
 import com.ktds.util.DownloadUtil;
+
+import io.github.seccoding.web.pager.explorer.PageExplorer;
 
 @Controller
 public class CommunityController {
@@ -37,15 +39,22 @@ public class CommunityController {
 
 	// 제일 첫 화면이 list페이지가 될거다
 	@RequestMapping("/")
-	public ModelAndView viewListPage(HttpSession session) {
+	public ModelAndView viewListPage(CommunitySearchVO communitySearch, HttpSession session) {
 //		if (session.getAttribute(Member.USER) == null) {
 //			return new ModelAndView("redirect:/login");
 //		}
 		ModelAndView view = new ModelAndView();
 		// /WEB-INF/view/community/list.jsp 가 만들어진다!
 		view.setViewName("community/list");
-		List<CommunityVO> communityList = communityService.getall();
+		/* 전체 게시글 가져올 때.
+		List<CommunityVO> communityList = communityService.getall(communitySearch);
 		view.addObject("communityList", communityList);
+		*/
+		
+		//Pager를 이용하여 전체 게시글 가져올 떄
+		PageExplorer pageExplorer = communityService.getall(communitySearch);
+		view.addObject("pageExplorer", pageExplorer);
+		
 		return view;
 	}
 

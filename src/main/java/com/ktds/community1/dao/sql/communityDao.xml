@@ -24,7 +24,43 @@
 			
 		</association>
 	</resultMap>
+	<select id="selectCountAll" resultType="_int" parameterType="communitySearchVO">
+		SELECT	COUNT(C.ID)
+		FROM	COMMUNITY C,
+				MEMBER M
+		WHERE	C.USER_ID = M.ID(+)
+	</select>
 
+	<select id="selectAll" resultMap="CommunityVOMap" parameterType="CommunitySearchVO">
+		SELECT	*
+		FROM	(
+			
+					SELECT	ROWNUM RNUM
+							, C.*
+					FROM	(
+								SELECT	C.ID,
+										C.TITLE,
+										C.BODY,
+										C.USER_ID,
+										TO_CHAR(C.WRITE_DATE, 'YYYY-MON-DD HH24:MI:SS','nls_date_language=ENGLISH') WRITE_DATE,
+										C.VIEW_COUNT,
+										C.RECOMMEND_COUNT,
+										C.REQUEST_IP,
+										C.DISPLAY_FILE_NAME,
+										M.ID M_ID,
+										M.EMAIL EMAIL,
+										M.NICKNAME NICKNAME,
+										M.REGIST_DATE
+								FROM	COMMUNITY C,
+										MEMBER M
+								WHERE	C.USER_ID = M.ID(+)
+								ORDER	BY C.ID DESC
+							)C
+					WHERE	ROWNUM <![CDATA[<=]]> #{endNumber}
+				)
+		WHERE	RNUM >= #{startNumber}
+	</select>
+<!-- Pager사용 하기전에 게시글들을 보여주는 코드. 
 	<select id="selectAll" resultMap="CommunityVOMap">
 		SELECT	C.ID,
 				C.TITLE,
@@ -44,7 +80,7 @@
 		WHERE	C.USER_ID = M.ID(+)
 		ORDER	BY C.ID DESC
 	</select>
-
+ -->
 	<insert id="insertCommunity" parameterType="CommunityVO">
 		INSERT INTO COMMUNITY
 		(

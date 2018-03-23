@@ -2,10 +2,13 @@ package com.ktds.community1.service;
 
 import java.util.List;
 
+import com.ktds.community1.vo.CommunitySearchVO;
 import com.ktds.community1.vo.CommunityVO;
 
+import io.github.seccoding.web.pager.explorer.PageExplorer;
+
 public interface CommunityService {
-	public List<CommunityVO> getall();
+	public PageExplorer getall(CommunitySearchVO communitySearch);
 	public CommunityVO getOne(int id);
 	public boolean createCoomunity(CommunityVO communityVO);
 	public int upViewCount(int id);
