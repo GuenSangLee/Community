@@ -33,7 +33,7 @@
 			</li>
 		</c:if>
 		<li>
-			<a href="<c:url value="/"/>">Community</a>
+			<a href="<c:url value="/reset"/>">Community</a>
 		</li>
 	</ul>
 </div>

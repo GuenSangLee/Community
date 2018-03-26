@@ -4,7 +4,26 @@ import io.github.seccoding.web.pager.annotations.EndRow;
 import io.github.seccoding.web.pager.annotations.StartRow;
 
 public class CommunitySearchVO {
-	private int pageNo;
+	private int pageNo= -1;
+	private int searchType;
+	private String searchKeyword;
+	
+	public int getSearchType() {
+		return searchType;
+	}
+
+	public void setSearchType(int searchType) {
+		this.searchType = searchType;
+	}
+
+	public String getSearchKeyword() {
+		return searchKeyword;
+	}
+
+	public void setSearchKeyword(String searchKeyword) {
+		this.searchKeyword = searchKeyword;
+	}
+
 	@StartRow
 	private int startNumber;
 	@EndRow

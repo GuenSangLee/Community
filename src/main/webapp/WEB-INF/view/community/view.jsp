@@ -158,6 +158,7 @@
 		</c:if>
 		<a href="<c:url value="/recommend/${community.id}"/>">[추천하기]</a>
 		<a href="<c:url value="/delCommunity/${community.id}"/>">[삭제하기]</a>
+		<a href="<c:url value="/"/>">[목록으로]</a>
 		
 	</p>
 	</div>

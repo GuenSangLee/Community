@@ -51,4 +51,17 @@
 						expression="execution(public * com.ktds..service.*ServiceImpl.*(..))" />
 		<aop:advisor advice-ref="rollbackRule" pointcut-ref="pointCut" />
 	</aop:config>
+	
+	
+	<!--  mysql-connect-java(dependencies설정 후) -->
+	<!-- mybatis로 oracle을 설정한 것처럼 설정을 잡아줘야됨. -->
+	<bean id="mysqlDataSource"
+			class="org.apache.commons.dbcp.BasicDataSource">
+			<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+			<property name="url" value="jdbc:mysql://localhost:3306/sys" />
+			<property name="username" value="History" />
+			<property name="password" value="history" />
+	</bean>
+	
+	
 </beans>

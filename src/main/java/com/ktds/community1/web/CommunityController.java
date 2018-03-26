@@ -32,27 +32,51 @@ import io.github.seccoding.web.pager.explorer.PageExplorer;
 public class CommunityController {
 
 	private CommunityService communityService;
-
+	
 	public void setCommunityService(CommunityService communityService) {
 		this.communityService = communityService;
 	}	
 
+	//검색 초기화, 글 등록 등을 실행 후 0번 페이지를 보여준다.
+	@RequestMapping("/reset")
+	public String viewInitListPage(HttpSession session) {
+		session.removeAttribute("__SEARCH__");
+		
+		return "redirect:/";
+	}
+	
 	// 제일 첫 화면이 list페이지가 될거다
 	@RequestMapping("/")
-	public ModelAndView viewListPage(CommunitySearchVO communitySearch, HttpSession session) {
+	public ModelAndView viewListPage(CommunitySearchVO communitySearchVO, HttpSession session) {
 //		if (session.getAttribute(Member.USER) == null) {
 //			return new ModelAndView("redirect:/login");
 //		}
+		
+		//데이터가 안 넘어왔을때.
+		//1. 리스트 페이지에 처음 접근했을 때
+		//2. 글 내용을 보고, 목록보기 링크를 클릭했을 떄.
+		if( communitySearchVO.getPageNo() < 0) {
+			//Session에 저장된 CommunitySearchVO를 가져옴
+			//Session에 저장된 CommunitySearchVO가 없을 경우, PageNo= 0 으로 초기화.
+			communitySearchVO= (CommunitySearchVO) session.getAttribute("__SEARCH__");
+			if (communitySearchVO == null) {
+				communitySearchVO= new CommunitySearchVO();
+				communitySearchVO.setPageNo(0);
+			}
+		}
+		
+		session.setAttribute("__SEARCH__", communitySearchVO);
 		ModelAndView view = new ModelAndView();
 		// /WEB-INF/view/community/list.jsp 가 만들어진다!
 		view.setViewName("community/list");
+		view.addObject("search", communitySearchVO);
 		/* 전체 게시글 가져올 때.
 		List<CommunityVO> communityList = communityService.getall(communitySearch);
 		view.addObject("communityList", communityList);
 		*/
 		
 		//Pager를 이용하여 전체 게시글 가져올 떄
-		PageExplorer pageExplorer = communityService.getall(communitySearch);
+		PageExplorer pageExplorer = communityService.getall(communitySearchVO);
 		view.addObject("pageExplorer", pageExplorer);
 		
 		return view;
@@ -97,7 +121,7 @@ public class CommunityController {
 
 		boolean isSuccess = communityService.createCoomunity(communityVO);
 		if (isSuccess) {
-			return new ModelAndView("redirect:/");
+			return new ModelAndView("redirect:/reset");
 		}
 		session.setAttribute("status", "fail");
 		return new ModelAndView("redirect:/write");

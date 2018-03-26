@@ -87,6 +87,7 @@ public class MemberController {
 		}
 		return "redirect:/login";
 	}
+	
 	@RequestMapping("/logout")
 	public String doLogoutAction(HttpSession session) {
 		session.invalidate();

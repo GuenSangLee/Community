@@ -29,6 +29,34 @@
 		FROM	COMMUNITY C,
 				MEMBER M
 		WHERE	C.USER_ID = M.ID(+)
+		AND		WRITE_DATE <![CDATA[<=]]> SYSDATE
+		AND		WRITE_DATE >= ADD_MONTHS(SYSDATE, -1)
+		<choose>
+			<when test="searchType == 1">
+		AND		C.TITLE LIKE '%'||#{searchKeyword} ||'%'
+			</when>
+			<when test="searchType == 2">
+		AND		C.BODY LIKE '%'||#{searchKeyword} ||'%'
+			</when>
+			<when test="searchType == 3">
+		AND		( C.BODY LIKE '%'||#{searchKeyword} ||'%'
+		OR		C.BODY LIKE '%'||#{searchKeyword} ||'%' )
+		
+			</when>
+			<when test="searchType == 4">
+		AND		C.NICKNAME LIKE '%'||#{searchKeyword} ||'%'
+			</when>
+			<when test="searchType == 5">
+		AND		C.EMAIL LIKE '%'||#{searchKeyword} ||'%'
+			</when>
+			<when test="searchType == 6">
+		AND		C.DISPLAY_FILE_NAME LIKE '%'||#{searchKeyword} ||'%'
+			</when>
+			<when test="searchType == 7">
+		AND		C.DISPLAY_FILE_NAME LIKE '%.'||#{searchKeyword}
+			</when>
+		
+		</choose>
 	</select>
 
 	<select id="selectAll" resultMap="CommunityVOMap" parameterType="CommunitySearchVO">
@@ -54,6 +82,32 @@
 								FROM	COMMUNITY C,
 										MEMBER M
 								WHERE	C.USER_ID = M.ID(+)
+								AND		WRITE_DATE <![CDATA[<=]]> SYSDATE
+								AND		WRITE_DATE >= ADD_MONTHS(SYSDATE, -1)
+								<choose>
+										<when test="searchType == 1">
+								AND		C.TITLE LIKE '%'||#{searchKeyword} ||'%'
+										</when>
+										<when test="searchType == 2">
+								AND		C.BODY LIKE '%'||#{searchKeyword} ||'%'
+										</when>
+										<when test="searchType == 3">
+								AND		( C.BODY LIKE '%'||#{searchKeyword} ||'%'
+								OR		C.BODY LIKE '%'||#{searchKeyword} ||'%' )
+										</when>
+										<when test="searchType == 4">
+								AND		C.NICKNAME LIKE '%'||#{searchKeyword} ||'%'
+										</when>
+										<when test="searchType == 5">
+								AND		C.EMAIL LIKE '%'||#{searchKeyword} ||'%'
+										</when>
+										<when test="searchType == 6">
+								AND		C.DISPLAY_FILE_NAME LIKE '%'||#{searchKeyword} ||'%'
+										</when>
+										<when test="searchType == 7">
+								AND		C.DISPLAY_FILE_NAME LIKE '%.'||#{searchKeyword}
+										</when>
+								</choose>
 								ORDER	BY C.ID DESC
 							)C
 					WHERE	ROWNUM <![CDATA[<=]]> #{endNumber}
