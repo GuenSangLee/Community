@@ -13,6 +13,7 @@
 		<config>src/main/webapp/WEB-INF/spring/rootContext.xml</config>
 		<config>src/main/webapp/WEB-INF/spring/memberContext.xml</config>
 		<config>src/main/webapp/WEB-INF/spring/replyContext.xml</config>
+		<config>src/main/webapp/WEB-INF/spring/actionHistoryContext.xml</config>
 	</configs>
 	<autoconfigs>
 	</autoconfigs>

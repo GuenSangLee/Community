@@ -2,7 +2,6 @@ package com.ktds.community1.web;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,15 +9,18 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
+import com.ktds.actionhistory.vo.ActionHistory;
+import com.ktds.actionhistory.vo.ActionHistoryVO;
 import com.ktds.community1.service.CommunityService;
 import com.ktds.community1.vo.CommunitySearchVO;
 import com.ktds.community1.vo.CommunityVO;
@@ -65,6 +67,7 @@ public class CommunityController {
 			}
 		}
 		
+		
 		session.setAttribute("__SEARCH__", communitySearchVO);
 		ModelAndView view = new ModelAndView();
 		// /WEB-INF/view/community/list.jsp 가 만들어진다!
@@ -80,6 +83,11 @@ public class CommunityController {
 		view.addObject("pageExplorer", pageExplorer);
 		
 		return view;
+	}
+
+	@RequestMapping("/dd")
+	public String viewAction() {
+		return "actionHistory/actionhistory";
 	}
 
 	// @RequestMapping(value = "/write", method = RequestMethod.GET)
@@ -220,9 +228,15 @@ public class CommunityController {
 		return view;
 	}
 	@RequestMapping(value="/modify/{id}", method=RequestMethod.POST)
-	public String doModifyPage(@PathVariable int id, HttpSession session, HttpServletRequest request,  @ModelAttribute("writeForm") @Valid CommunityVO communityVO, Errors errors) {
+	public String doModifyPage(@PathVariable int id, HttpSession session, HttpServletRequest request
+			, @ModelAttribute("writeForm") @Valid CommunityVO communityVO, Errors errors
+			, @RequestAttribute ActionHistoryVO actionHistory) {
+		
 		MemberVO member= (MemberVO) session.getAttribute(Member.USER);
 		CommunityVO originalVO= communityService.getOne(id);
+		String asIs= "";
+		String toBe= "";
+		
 		
 		if(member.getId() != originalVO.getUserId()) {
 			return "error/404";
@@ -240,27 +254,26 @@ public class CommunityController {
 //		1.아이피 변경 체크.
 		String ip= request.getRemoteAddr();
 		if (!ip.equals( originalVO.getRequestIp())) {
+			asIs+="Ip: " + originalVO.getRequestIp()+ "</br>";
+			toBe+= "Ip: " + ip+ "</br>";
 			newCommunity.setRequestIp(ip);
 			isModify= true;
 		}
 		
 //		2. 제목 변경확인
 		if(!originalVO.getTitle().equals(communityVO.getTitle())) {
+			asIs+="Title: " + originalVO.getTitle() + "</br>";
+			toBe+= "Title: " + communityVO.getTitle() + "</br>";
 			newCommunity.setTitle(communityVO.getTitle());
 			isModify= true;
 		}
 //		3.내용체크
 		if(!originalVO.getBody().equals(communityVO.getBody())) {
+			asIs+="Body: " + originalVO.getBody() + "</br>";
+			toBe+= "Body: " + communityVO.getBody() + "</br>";
 			newCommunity.setTitle(communityVO.getBody());
 			isModify= true;
 		}
-//		4.file체크
-//		4-1
-//		if(!originalVO.getDisplayFilename().equals(communityVO.getDisplayFilename())) {
-//			newCommunity.setTitle(communityVO.getTitle());
-//			isModify= true;
-//		}
-//		4-2
 		if(communityVO.getDisplayFilename().length() > 0) {
 			File file= new File("/d:/uploadFiles/"+communityVO.getDisplayFilename());
 			file.delete();
@@ -270,6 +283,18 @@ public class CommunityController {
 			//원래 데이터 유지
 			communityVO.setDisplayFilename(originalVO.getDisplayFilename());
 		}
+		
+		if(!originalVO.getDisplayFilename().equals(communityVO.getDisplayFilename())) {
+			newCommunity.setDisplayFilename(communityVO.getDisplayFilename());
+			asIs+="Filename: " + originalVO.getDisplayFilename() + "</br>";
+			toBe+= "Filename: " + communityVO.getDisplayFilename() + "</br>";
+		}
+		actionHistory.setReqType(ActionHistory.ReqType.COMMUNITY);
+		String log= String.format(ActionHistory.Log.UPDATE, originalVO.getTitle(), originalVO.getBody());
+		actionHistory.setAsIs(asIs);
+		actionHistory.setToBe(toBe);
+		actionHistory.setLog(log);
+		
 		
 		communityVO.save();
 //		변경여부 체크.

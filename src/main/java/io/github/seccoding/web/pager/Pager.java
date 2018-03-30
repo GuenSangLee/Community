@@ -11,6 +11,7 @@ import io.github.seccoding.web.pager.explorer.PageExplorer;
 public abstract class Pager {
 	
 	public static final boolean ORACLE = true;
+	
 	public static final boolean OTHER = false;
 	//전체 게시글 개수
 	private int totalArticleCount;

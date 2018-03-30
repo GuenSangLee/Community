@@ -58,10 +58,45 @@
 	<bean id="mysqlDataSource"
 			class="org.apache.commons.dbcp.BasicDataSource">
 			<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-			<property name="url" value="jdbc:mysql://localhost:3306/sys" />
+			<property name="url" value="jdbc:mysql://localhost:3306/sys?serverTimezone=UTC" />
 			<property name="username" value="History" />
 			<property name="password" value="history" />
 	</bean>
+	
+	<bean	id="mysqlSqlSessionFactory"
+			class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="mysqlDataSource"/>
+		<property name="configLocation" value="classpath:/mybatis/mybatis.xml"/>		
+	</bean>
+	
+	<!-- MyBatis 가 DB에 Query(SQL)을 실행하고, 결과를 받아오게 도와주는 설정 -->
+	<bean	id="mysqlSessionTemplate"
+			class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg name="sqlSessionFactory" ref="mysqlSqlSessionFactory" />	
+	</bean>
+	
+	<!-- Transaction(Commit: 반영, Rollback: 원복) 설정 -->
+	<bean	id="mysqlTransactionManager"
+			class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="mysqlDataSource"/>
+	</bean>
+	
+	<!-- Rollback 규칙 설정 -->
+	<tx:advice id="mysqlRollbackRule" transaction-manager="mysqlTransactionManager">
+		<tx:attributes>
+			<tx:method name="create*" rollback-for="RuntimeException" />
+			<tx:method name="read*" rollback-for="RuntimeException" />
+			<tx:method name="update*" rollback-for="RuntimeException" />
+			<tx:method name="delete*" rollback-for="RuntimeException" />
+			<tx:method name="increment*" rollback-for="RuntimeException" />
+		</tx:attributes>
+	</tx:advice>
+	<!-- Transaction 대상 설정 -->
+	<aop:config>
+		<aop:pointcut	id="mysqlPointCut"
+						expression="execution(public * com.ktds..service.*ServiceImpl.*(..))" />
+		<aop:advisor advice-ref="mysqlRollbackRule" pointcut-ref="mysqlPointCut" />
+	</aop:config>
 	
 	
 </beans>

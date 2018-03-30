@@ -9,6 +9,8 @@
 		<typeAlias type="com.ktds.member.vo.MemberVO" alias="MemberVO" />
 		<typeAlias type="com.ktds.reply.vo.ReplyVO" alias="ReplyVO" />
 		<typeAlias type="com.ktds.community1.vo.CommunitySearchVO" alias="CommunitySearchVO"/>
+		<typeAlias type="com.ktds.actionhistory.vo.ActionHistoryVO" alias="ActionHistoryVO"/>
+		<typeAlias type="com.ktds.actionhistory.vo.ActionHistorySearchVO" alias="ActionHistorySearchVO"/>
 		
 	</typeAliases>
 	
@@ -16,5 +18,6 @@
 		<mapper resource="/com/ktds/community1/dao/sql/communityDao.xml" />
 		<mapper resource="/com/ktds/member/dao/sql/memberDao.xml" />
 		<mapper resource="/com/ktds/reply/dao/sql/replyDao.xml"/>
+		<mapper resource="/com/ktds/actionhistory/dao/sql/ActionHistoryDao.xml"/>
 	</mappers>
 </configuration>  

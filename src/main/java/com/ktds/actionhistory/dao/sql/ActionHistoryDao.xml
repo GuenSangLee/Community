@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ActionHistoryDao">
+	<insert id="insertActionHistory" parameterType="ActionHistoryVO">
+		INSERT	INTO	ACTION_HIST(
+			HIST_DATE
+			,REQ_TYPE
+			,IP
+			,USER_ID
+			,EMAIL
+			,LOG
+			,AS_IS
+			,TO_BE
+		)
+		VALUES(
+			NOW()
+			,#{reqType}
+			,#{ip}
+			,#{userId}
+			,#{email}
+			,#{log}
+			,#{asIs}
+			,#{toBe}
+		)
+	</insert>
+	<select id="selectAllActionHistroyCount" parameterType="ActionHistorySearchVO" resultType="_int" >
+		SELECT	COUNT(HIST_ID)
+		FROM	ACTION_HIST
+		WHERE	HIST_DATE >=STR_TO_DATE(#{strDate}, '%Y-%m-%d %H:%i:%S')
+		AND		HIST_DATE <![CDATA[<=]]> STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%S')
+		<if test="requestType != '' and requestType != null ">
+		AND		REQ_TYPE = #{requestType}
+		</if>	
+		<if test="ip != '' and ip != null ">
+		AND		IP = #{ip}
+		</if>
+		<if test="email != '' and email != null ">
+		AND		EMAIL = #{email}
+		</if>
+		<if test="log != '' and log != null ">
+		AND		LOG LIKE CONCAT('%', #{log}, '%')
+		</if>
+		<if test="asIs != '' and asIs != null ">
+		AND		AS_IS LIKE CONCAT('%', #{asIs}, '%')
+		</if>
+		<if test="toBe != '' and toBe != null ">
+		AND		TO_BE LIKE CONCAT('%', #{toBe}, '%')
+		</if>
+		
+	</select>
+
+	<select id="selectAllActionHistory" parameterType="ActionHistorySearchVO" resultType="ActionHistoryVO">
+		SELECT	*
+		FROM	(
+					SELECT	HIST_ID histId
+							,HIST_DATE hisDate
+							,REQ_TYPE reqType
+							,IP
+							,USER_ID userId
+							,EMAIL
+							,LOG
+							,AS_IS asIs
+							,TO_BE toBe
+					FROM	ACTION_HIST
+					WHERE	HIST_DATE >=STR_TO_DATE(#{strDate}, '%Y-%m-%d %H:%i:%S')
+					AND		HIST_DATE <![CDATA[<=]]> STR_TO_DATE(#{endDate}, '%Y-%m-%d %H:%i:%S')
+					<if test="requestType != '' and requestType != null ">
+					AND		REQ_TYPE = #{requestType}
+					</if>	
+					<if test="ip != '' and ip != null " >
+					AND		IP = #{ip}
+					</if>
+					<if test="email != '' and email != null ">
+					AND		EMAIL = #{email}
+					</if>
+					<if test="log != '' and log != null ">
+					AND		LOG LIKE CONCAT('%', #{log}, '%')
+					</if>
+					<if test="asIs != '' and asIs != null ">
+					AND		AS_IS LIKE CONCAT('%', #{asIs}, '%')
+					</if>
+					<if test="toBe != '' and toBe != null ">
+					AND		TO_BE LIKE CONCAT('%', #{toBe}, '%')
+					</if>
+					ORDER BY HIST_ID DESC
+					LIMIT	#{startRow}, #{endRow}
+				) A
+		ORDER BY histId DESC
+	</select>
+</mapper>

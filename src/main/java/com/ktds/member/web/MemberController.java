@@ -9,15 +9,20 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ktds.actionhistory.vo.ActionHistory;
+import com.ktds.actionhistory.vo.ActionHistory.ReqType;
+import com.ktds.actionhistory.vo.ActionHistoryVO;
 import com.ktds.community1.service.CommunityService;
 import com.ktds.member.constants.Member;
 import com.ktds.member.service.MemberService;
@@ -60,23 +65,48 @@ public class MemberController {
 	}
 	
 	@RequestMapping(value="/regist", method=RequestMethod.POST)
-	public ModelAndView doRegistAction ( @ModelAttribute("registForm")
-										@Valid MemberVO memberVO, Errors errors) {
+	public String doRegistAction ( @ModelAttribute("registForm")
+										@Valid MemberVO memberVO, Errors errors
+										,HttpServletRequest request
+										,Model model) {
+		
 		
 		if ( errors.hasErrors() ) {
-			return new ModelAndView("member/regist");
+			return "member/regist";
 		}
+		ActionHistoryVO history = (ActionHistoryVO) request.getAttribute("actionHistory");
+		//static으로 지정한 ReqType중 알맞는 타입을 가져온다.
+		history.setReqType(ActionHistory.ReqType.MEMBER);
+		
+		//handler에서 미리 지정하여 쓸모 없어짐.
+//		history.setIp(request.getRemoteAddr());
 		
 		if ( memberService.createMember(memberVO) ) {
-			return new ModelAndView("redirect:/login");
+			//회원 가입 성공시, 로그 남기기
+//				log형식을 미리 만들어둔 형식으로 format.
+			String log = String.format(ActionHistory.Log.REGIST, memberVO.getEmail(), memberVO.getNickname(), "true");
+			history.setLog(log);
+			
+			model.addAttribute("actionHistory", history);
+			return "redirect:/login";
+			
 		}
+//		회원 가입 실패시, 로그남기기
+		String log = String.format(ActionHistory.Log.REGIST, memberVO.getEmail(), memberVO.getNickname(), "false");
+		history.setLog(log);
 		
-		return new ModelAndView("member/regist");
+		model.addAttribute("actionHistory", history);
+		return "member/regist";
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public String doLoginAction(@ModelAttribute("loginForm") @Valid MemberVO memberVO, Errors errors, HttpServletRequest request) {
+	public String doLoginAction(@ModelAttribute("loginForm") @Valid MemberVO memberVO, Errors errors,
+			HttpServletRequest request, @RequestAttribute ActionHistoryVO actionHistory) {
 		HttpSession session = request.getSession();
+		
+		actionHistory.setReqType(ActionHistory.ReqType.MEMBER);
+		String log = String.format(ActionHistory.Log.LOGIN, memberVO.getEmail());
+		actionHistory.setLog(log);
 		
 		MemberVO loginMember = memberService.readMember(memberVO);
 		
@@ -89,8 +119,28 @@ public class MemberController {
 	}
 	
 	@RequestMapping("/logout")
-	public String doLogoutAction(HttpSession session) {
+	public String doLogoutAction(HttpSession session, Model model, HttpServletRequest request
+			,@RequestAttribute ActionHistoryVO actionHistory) {
+		ActionHistoryVO history= (ActionHistoryVO) request.getAttribute("actionHistory");
+		/* 처음 사용한 방법.
+		history.setReqType(ActionHistory.ReqType.MEMBER);
+		MemberVO member= (MemberVO) session.getAttribute(Member.USER);
+//		String log= String.format(ActionHistory.Log.LOGOUT, member.getEmail());
+		String log= String.format(ActionHistory.Log.LOGOUT, ((MemberVO) session.getAttribute(Member.USER)).getEmail());;
+		history.setLog(log);
+		model.addAttribute("actionHistory", history);
+		
 		session.invalidate();
+		*/
+		
+		//@RequestAttribute 사용 (spring 4.0 이상)
+		actionHistory.setReqType(ReqType.MEMBER);
+		String log= String.format(ActionHistory.Log.LOGOUT, ((MemberVO) session.getAttribute(Member.USER)).getEmail());;		
+		actionHistory.setLog(log);
+		
+		session.invalidate();
+		
+		
 		return "redirect:/login";
 	}
 	

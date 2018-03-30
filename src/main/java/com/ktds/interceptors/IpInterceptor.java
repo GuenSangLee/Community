@@ -11,7 +11,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 public class IpInterceptor extends HandlerInterceptorAdapter{
 	private List<String> blackList;
-	private String ipNum = "192.168.201";
+	private String ipNum = "192.168.300";
 	
 	public IpInterceptor() {
 		blackList = new ArrayList<String>();

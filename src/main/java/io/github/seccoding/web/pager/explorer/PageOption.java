@@ -5,6 +5,7 @@ public class PageOption {
 
     private String formId = "searchForm";
 
+    
     private String link = "pageNo";
 
     private String pageFormat = "[@]";
