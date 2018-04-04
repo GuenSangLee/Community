@@ -209,7 +209,7 @@ public class MemberController {
 	@ResponseBody
 	public Map<String, Boolean> apiIsExistsEmail(@RequestParam String email){
 		boolean isExists= memberService.readCountMemberEmail(email);
-		
+		System.out.println("콩");
 		Map<String, Boolean> response= new HashMap<String, Boolean>();
 		response.put("response", isExists);
 		
